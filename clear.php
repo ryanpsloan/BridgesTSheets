@@ -2,7 +2,7 @@
 session_start();
 session_unset();
 session_destroy();
-header("Location: index.php");
+header("Location: format.php");
 /**
  * Author: Ryan Sloan
  * ryan@paydayinc.com

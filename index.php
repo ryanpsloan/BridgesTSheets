@@ -57,7 +57,8 @@ session_start();
 <div class="container-fluid">
     <div class="row center border">
         <h3>Bridges TSheets Formatter</h3>
-        <ul>
+        <a href="format.php">Format File</a>
+        <ul id="indexUL">
             <li>
                 <a href="addEmployee.php">Add/Edit/Update Employee Information</a>
             </li>
@@ -65,10 +66,14 @@ session_start();
                 <a href="viewRates.php">View Rate Information</a>
             </li>
             <li>
-                <a href="format.php">Format File</a>
+                <a href="viewJobs.php">View Job Information</a>
+            </li>
+            <li>
+
             </li>
 
         </ul>
+
 
     </div>
 

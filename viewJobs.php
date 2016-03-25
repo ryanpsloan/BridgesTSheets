@@ -1,7 +1,10 @@
 <?php
-include_once("/var/www/html/Bridges/php/class/Rate.php");
-include_once("/var/www/html/Bridges/php/class/dbConnect.php");
+include_once ("/var/www/html/Bridges/php/class/dbConnect.php");
+include_once ("/var/www/html/Bridges/php/class/Job.php");
 session_start();
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,30 +56,30 @@ session_start();
     <div><?php if(isset($_SESSION['output'])){ echo $_SESSION['output']; $_SESSION['output'] = "";} ?></div>
     <div class="container-fluid">
         <div class="row center">
-        <h3>View Rates</h3>
-        <table id="viewEmployeesTable">
+            <h3>View Jobs</h3>
+            <table id="viewJobsTable">
 
-            <?php
-            $mysqli = MysqliConfiguration::getMysqli();
-            $rates = Rate::getAllRates($mysqli);
-            if($rates !== null) {
-                echo "<tr><td>Database Id</td><td>Rate Id</td><td>E/D</td><td>Code</td></tr>";
-                foreach ($rates as $object) {
-                    $rateId = $object->getRateId();
-                    $rate = $object->getRate();
-                    $ed = $object->getED();
-                    $code = $object->getCode();
-                    echo <<<HTML
+                <?php
+                $mysqli = MysqliConfiguration::getMysqli();
+                $jobs = Job::getAllJobs($mysqli);
+                if($jobs !== null) {
+                    echo "<tr><td>Database Id</td><td>Job Code</td><td>Job Description</td></tr>";
+                    foreach ($jobs as $object) {
+                        $jobId = $object->getJobId();
+                        $jobCode = $object->getJobCode();
+                        $jobDesc = $object->getJobDescription();
 
-                <tr><td>$rateId</td><td>$rate</td><td>$ed</td><td>$code</td></tr>
+                        echo <<<HTML
+
+                <tr><td>$jobId</td><td>$jobCode</td><td>$jobDesc</td></tr>
 HTML;
 
+                    }
+                }else{
+                    echo "<tr><td>No jobs to list</td></tr>";
                 }
-            }else{
-                echo "<tr><td>No rates to list</td></tr>";
-            }
-            ?>
-        </table>
+                ?>
+            </table>
         </div>
     </div>
 </main>

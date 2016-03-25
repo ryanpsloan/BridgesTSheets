@@ -19,17 +19,28 @@ session_start();
     <script>
         $(document).ready(function() {
             var select = $("select[id='employeeList']");
+            var selectB = $("select[id='employeeListB']");
             var empId = $("input[id='empId1']");
             var firstName = $("input[id='firstName1']");
             var lastName = $("input[id='lastName1']");
             select.change(function(){
+                var data = $(this).find(':selected').data('employee');
+                console.log(data);
+                $("input[id='employeeId']").val(data);
                 var value = select.val();
                 var text = $("#employeeList option:selected").text();
                 var arr = text.split(" ");
-                console.log(arr);
+                //console.log(arr);
                 empId.val(value);
                 firstName.val(arr[0]);
                 lastName.val(arr[1]);
+
+            });
+
+            selectB.change(function(){
+                var value = $(this).find(':selected').data('employee');
+                //console.log(value);
+                $("input[id='employeeIdA']").val(value);
 
             });
 
@@ -79,7 +90,8 @@ session_start();
     <div class="tab-content">
         <div id="home" class="tab-pane fade in active center">
             <h3>Add Employee</h3>
-            <form action="php/pages/processEmployee.php" method="POST">
+            <p>All fields are required. Employee Id must be unique with no spaces or special characters. First or Last name can contain spaces, periods, commas, dashes and &.</p>
+            <form action="processEmployee.php" method="POST">
                 <table>
                     <tr>
                         <td><label for="empId">Employee Id</label><input type="text" id="empId" name="empId" required></td>
@@ -92,7 +104,7 @@ session_start();
         </div>
         <div id="menu1" class="tab-pane fade center">
             <h3>Update Employee</h3>
-            <form action="php/pages/processEmployee.php" method="POST">
+            <form action="processEmployee.php" method="POST">
             <select id="employeeList" name="employeeList">
                 <option value="None">None Selected</option>
             <?php
@@ -105,7 +117,7 @@ session_start();
                         $name = ucwords($object->getFirstName() . " " . $object->getLastName());
                         echo <<<HTML
 
-                        <option value="$empId">$name</option>
+                        <option data-employee="$employeeId" value="$empId">$name</option>
 HTML;
 
 
@@ -113,7 +125,7 @@ HTML;
                 }
 
             ?></select>
-                <input type="hidden" id="employeeId" name="employeeId" value="<?php echo isset($employeeId) ? $employeeId : ""; ?>">
+                <input type="hidden" id="employeeId" name="employeeId" value="">
                 <table>
                     <tr>
                         <td><label for="empId1">Evolution Id</label><input type="text" id="empId1" name="empId1"></td>
@@ -126,21 +138,23 @@ HTML;
         </div>
         <div id="menu2" class="tab-pane fade center">
             <h3>Delete Employee</h3>
-            <form action="php/pages/processEmployee.php" method="POST">
+            <form action="processEmployee.php" method="POST">
                 <table><tr><td>Select Employee to Delete:</td><td>
-                <select id="employeeList" name="employeeList" required>
+                <select id="employeeListB" name="employeeListB" required>
                     <option value="None">None Selected</option>
                     <?php
                     $mysqli = MysqliConfiguration::getMysqli();
                     $employees = Employee::getAllEmployees($mysqli);
+
                     if($employees !== null) {
                         foreach ($employees as $object) {
+
                             $employeeId = $object->getEmployeeId();
                             $empId = $object->getEmpId();
                             $name = ucwords($object->getFirstName() . " " . $object->getLastName());
                             echo <<<HTML
 
-                        <option value="$empId">$name</option>
+                        <option data-employee="$employeeId" value="$empId">$name</option>
 HTML;
 
 
@@ -154,7 +168,7 @@ HTML;
                     </tr>
 
                 </table>
-                <input type="hidden" id="employeeId" name="employeeId" value="<?php echo isset($employeeId) ? $employeeId : ""; ?>">
+                <input type="hidden" id="employeeIdA" name="employeeIdA" value="">
             </form>
         </div>
         <div id="menu3" class="tab-pane fade in center">

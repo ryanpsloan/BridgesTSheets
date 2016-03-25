@@ -1,14 +1,6 @@
 <?php
 session_start();
 
-
-
-
-
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -22,7 +14,7 @@ session_start();
 
     <!-- Latest compiled JavaScript -->
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../../css/css.css">
+    <link rel="stylesheet" href="css/css.css">
 </head>
 <body>
 <header>
@@ -36,7 +28,7 @@ session_start();
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../../index.php">Home</a>
+                <a class="navbar-brand" href="index.php">Home</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -56,10 +48,15 @@ session_start();
     </nav>
 </header>
 <main>
+    <div><?php if(isset($_SESSION['output'])){echo $_SESSION['output']."<br>"; $_SESSION['output'] = "";}
+        if(isset($_SESSION['fileName'])){ echo "<a href='download.php'>Download</a> | ";
+                                          echo "<a href='clear.php'>Clear File</a><br>"; }?></div>
     <div class="container-fluid">
         <div class="row center">
+            <p>Remember to open the excel file and save the sheet with the data as a .csv. Upload .csv only</p>
             <form action="processor.php" method="POST" enctype="multipart/form-data">
             <table id="fileUpload" class="border">
+
                 <tr><td><label for="file">TSheets File Upload</label></td></tr>
                 <tr><td><input type="file" id="file" name="file"></td></tr>
                 <tr><td><hr/></td></tr>

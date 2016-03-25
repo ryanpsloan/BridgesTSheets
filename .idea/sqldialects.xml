@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="REMOTE_DEPLOYMENT_FS://&lt;8506fc80-434d-4e25-b6d9-06b4ae047bb5&gt;/sql/theSQL.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/sql/theSQL.sql" dialect="MySQL" />
   </component>
 </project>

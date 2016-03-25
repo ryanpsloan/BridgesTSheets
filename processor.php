@@ -23,6 +23,7 @@ session_start();
 include_once("/var/www/html/Bridges/php/class/Employee.php");
 include_once("/var/www/html/Bridges/php/class/dbConnect.php");
 include_once("/var/www/html/Bridges/php/class/Rate.php");
+include_once("/var/www/html/Bridges/php/class/Job.php");
 if(isset($_FILES)) { //Check to see if a file is uploaded
     try {
         if (($log = fopen("log.txt", "w")) === false) { //open a log file
@@ -141,31 +142,33 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
 
         //sorts the data by name column index 1 and date column index 3
 
-        $nameArr = $daterArr = array();
+        $nameArr = $jobArr = array();
 
         foreach($fileData as $key => $value ){
 
             $nameArr[] = $value[1];
-            $dateArr[] = $value[3];
+            $jobArr[] = $value[5];
         }
-        array_multisort($nameArr, SORT_ASC, $dateArr, SORT_ASC, $fileData);
+        array_multisort($nameArr, SORT_ASC, $jobArr, SORT_ASC, $fileData);
 
 
         $_SESSION['fileData'] = $fileData;
 
+        //var_dump($fileData);
+
         $data = array();
         foreach($fileData as $line){
-            $newDate = new DateTime($line[3]);
-            $data[$line[0]." ".$line[1]][$newDate->format("m-d-Y")][] = $line;
+            //$newDate = new DateTime($line[3]);
+            $data[$line[0]." ".$line[1]][$line[5] . " " . $line[6]][] = $line; //[$newDate->format("m-d-Y")][] = $line;
         }
 
         //var_dump($data);
         $sum = array();
-        foreach($data as $key => $ee) {
-            foreach ($ee as $date) {
-                foreach($date as $row) {
-                   $newDate = new DateTime($row[3]);
-                   $sum[$key][$newDate->format("m-d-Y")][] = $row[4];
+        foreach($data as $name => $ee) {
+            foreach ($ee as $job => $arr) {
+                foreach($arr as $row) {
+                   //$newDate = new DateTime($row[3]);
+                   $sum[$name][$job][] = $row[4];//[$newDate->format("m-d-Y")][] = $row[4];
 
                 }
             }
@@ -176,8 +179,8 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         $summed = array();
         foreach($sum as $name => $ee){
 
-            foreach($ee as $date => $arr){
-                $summed[$name][$date] = array_sum($arr);
+            foreach($ee as $job => $arr){
+                $summed[$name][$job] = array_sum($arr);
             }
         }
         //var_dump($summed);
@@ -186,22 +189,79 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         $output = array();
         foreach($data as $name => $ee) {
             $nameArr = explode(' ', $name);
+            if($nameArr[0] === ""){
+                continue;
+            }
             $employee = Employee::getEmployeeByName($mysqli, $nameArr[0], $nameArr[1]);
-
-            foreach ($ee as $date => $line) {
-                    var_dump($line[0][8]);
+            //var_dump($employee);
+            if($employee === null){
+                throw(new Exception($nameArr[0] ." ". $nameArr[1]. " is not in the employee database please add them.<br><a href='addEmployee.php'>Add ". $nameArr[0]."</a>"));
+            }
+            foreach ($ee as $job => $line) {
+                    //var_dump($line[0][8]);
+                    $date = $line[0][3];
+                    $jobDescription = $line[0][5] . " " . $line[0][6];
+                    $jobObj = Job::getJobByJobDescription($mysqli, $jobDescription);
+                    //var_dump($nameArr, $jobDescription, $jobObj);
+                    $objCode = $jobObj->getJobCode();
+                    //var_dump($nameArr, $jobDescription, $jobObj, $objCode);
                     $rate = Rate::getRateByRate($mysqli, $line[0][8]);
-                    //                        1                      2           3               4               5        6             7              8    9
-                    $output[] = array($employee->getEmpId(), "$nameArr[0], $nameArr[1]", "", $line[0][5] . ": " . $line[0][7], "", $rate->getED(), $rate->getCode(), "", $line[0][4]);
+                    $objRate = $line[0][8];
+                    if(substr($objRate,0,2) === "PT"){
+                        $objRate = substr($objRate,10,1);
+                    }else if(substr($objRate,0,2) === "OT"){
+                        $objRate = substr($objRate,9,1);
+                    }else if(substr($objRate,0,2) === "Ra"){
+                        $objRate = substr($objRate,5,1);
+                    }else if(substr($objRate,0,2) === "SA"){
+                        $objRate = "";
+                    }
+                    //var_dump($rate);
+                    //                        0                           1              2      3       4         5               6           7        8                9  10             15             20          25
+                    $output[] = array($employee->getEmpId(), "$nameArr[0], $nameArr[1]", "","$objCode", "", $rate->getED(), $rate->getCode(), "", $summed[$name][$job], "","","","","","","","","","","","","","","","",$objRate);
 
             }
         }
-        var_dump($output);
+
+        //var_dump($output);
+
+
+        $today = new DateTime('now');
+        $month = $today->format("m");
+        $day = $today->format('d');
+        $year = $today->format('y');
+        $time = $today->format('H-i-s');
+
+
+        $fileName = "BridgesFiles/Bridges_TSheets_Processed_File_" .$month . "-" . $day . "-" . $year . "-" . $time . ".csv";
+        $handle = fopen($fileName, 'wb');
+
+
+        foreach($output as $arr){
+            $count = 0;
+            foreach($arr as $line) {
+                fwrite($handle, "$line");
+
+                if($count < 25){
+                    fwrite($handle, ",");
+                }
+                $count++;
+
+            }
+            fwrite($handle, "\n");
+        }
+        fclose($handle);
+
+        $_SESSION['output'] = "Successfully created File.";
+        $_SESSION['fileName'] = $fileName;
+        header("Location: format.php");
+
     } catch (Exception $e) {
-        echo $e->getMessage();
-        //header('Location: index.php?');
+        $_SESSION['output'] = $e->getMessage();
+        header('Location: format.php?');
     }
 }else{
-    header('Location: index.php?output=<p>No File Was Selected</p>');
+    $_SESSION['output'] = "<p>No File Was Selected</p>";
+    header('Location: format.php');
 }
 ?>

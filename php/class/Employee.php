@@ -61,25 +61,26 @@ class Employee{
     }
 
     public function setEmpId($newEmpId){
-        if(filter_var($newEmpId, FILTER_VALIDATE_INT) === false){
-            throw(new UnexpectedValueException("EmpId $newEmpId is not an integer"));
+        $newEmpId = trim($newEmpId);
+
+        if(filter_var($newEmpId, FILTER_SANITIZE_STRING) === false){
+            throw(new UnexpectedValueException("EmpId $newEmpId is not a string"));
+        }
+        $filterOptions = array("options" => array("regexp" => "/^[\da-zA-Z]+$/"));
+        if(filter_var($newEmpId, FILTER_VALIDATE_REGEXP, $filterOptions) === false){
+            throw(new RangeException("employeeId $newEmpId cannot contain spaces or special characters"));
         }
 
-        $newEmpId = intval($newEmpId);
-        if($newEmpId <= 0){
-            throw(new RangeException("EmpId $newEmpId is not positive"));
-        }
-
-        $this->empId = $newEmpId;
+       $this->empId = $newEmpId;
 
     }
 
     public function setFirstName($newFirstName){
         $newFirstName = trim($newFirstName);
         $newFirstName = strtolower($newFirstName);
-        $filterOptions = array("options" => array("regexp" => "/^[a-z]+$/"));
+        $filterOptions = array("options" => array("regexp" => "/^[a-z- .&,]+$/"));
         if(filter_var($newFirstName, FILTER_VALIDATE_REGEXP, $filterOptions) === false){
-            throw(new RangeException("First name cannot contain spaces, numbers, or special characters"));
+            throw(new RangeException("First name cannot contain numbers, or special characters except . , - or &"));
         }
         $this->firstName = $newFirstName;
     }
@@ -87,9 +88,9 @@ class Employee{
     public function setLastName($newLastName){
         $newLastName = trim($newLastName);
         $newLastName = strtolower($newLastName);
-        $filterOptions = array("options" => array("regexp" => "/^[a-z]+$/"));
+        $filterOptions = array("options" => array("regexp" => "/^[a-z- .&,]+$/"));
         if(filter_var($newLastName, FILTER_VALIDATE_REGEXP, $filterOptions) === false){
-            throw(new RangeException("Last name cannot contain spaces, numbers, or special characters"));
+            throw(new RangeException("Last name cannot contain numbers, or special characters except . , - or &"));
         }
         $this->lastName = $newLastName;
 
@@ -112,7 +113,7 @@ class Employee{
             throw(new mysqli_sql_exception("Unable to prepare statement"));
         }
 
-        $wasClean = $statement->bind_param("iiss", $this->employeeId, $this->empId, $this->firstName, $this->lastName);
+        $wasClean = $statement->bind_param("isss", $this->employeeId, $this->empId, $this->firstName, $this->lastName);
         if($wasClean === false){
             throw(new mysqli_sql_exception("Unable to bind parameters"));
         }
@@ -164,7 +165,7 @@ class Employee{
             throw(new mysqli_sql_exception("Unable to prepare statement"));
         }
 
-        $wasClean = $statement->bind_param("issi", $this->empId, $this->firstName, $this->lastName, $this->employeeId);
+        $wasClean = $statement->bind_param("sssi", $this->empId, $this->firstName, $this->lastName, $this->employeeId);
         if($wasClean === false){
             throw(new mysqli_sql_exception("Unable to bind parameters"));
         }
@@ -179,11 +180,11 @@ class Employee{
             throw(new mysqli_sql_exception("Input is not a valid mysqli object"));
         }
 
+        $employeeId = intval($employeeId);
         if(filter_var($employeeId, FILTER_VALIDATE_INT) === false){
             throw(new UnexpectedValueException("employeeId $employeeId is not an integer"));
         }
 
-        $employeeId = intval($employeeId);
         if($employeeId <= 0){
             throw(new RangeException("employeeId $employeeId is not positive"));
         }
@@ -236,7 +237,7 @@ class Employee{
         $firstName = filter_var($firstName, FILTER_SANITIZE_STRING);
         $lastName = filter_var($lastName, FILTER_SANITIZE_STRING);
 
-        $query = "SELECT employeeId, empId, firstName, lastName FROM employee WHERE firstName = ? AND lastName = ?";
+        $query = "SELECT employeeId, empId, firstName, lastName FROM employee WHERE firstName LIKE ? AND lastName LIKE ?";
         $statement = $mysqli->prepare($query);
         if($statement === false){
             throw(new mysqli_sql_exception("Unable to prepare statement"));
@@ -276,7 +277,7 @@ class Employee{
             throw(new mysqli_sql_exception("Input is not a valid mysqli object"));
         }
 
-        $query = "SELECT employeeId, empId, firstName, lastName FROM employee";
+        $query = "SELECT employeeId, empId, firstName, lastName FROM employee ORDER BY empId ASC";
         $statement = $mysqli->prepare($query);
         if($statement === false){
             throw(new mysqli_sql_exception("Unable to prepare statement"));

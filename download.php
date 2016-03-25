@@ -20,5 +20,7 @@ if(isset($_SESSION['fileName'])) {
         readfile($file);
         exit;
     }
+
 }
+
 ?>

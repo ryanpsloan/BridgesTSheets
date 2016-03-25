@@ -37,13 +37,13 @@ div{
     text-align:center;
 }
 
-#viewEmployeesTable{
+#viewEmployeesTable, #viewJobsTable{
     margin: 0 auto;
 
 }
 
-#viewEmployeesTable, #viewEmployeesTable tr, #viewEmployeesTable td{
-    border: 2px solid blue;
+#viewEmployeesTable, #viewEmployeesTable tr, #viewEmployeesTable td, #viewJobsTable, #viewJobsTable tr, #viewJobsTable td{
+    border: 2px solid lightgrey;
 }
 
 #fileUpload{
@@ -52,4 +52,12 @@ div{
 
 hr{
     border-color: blue;
+}
+
+#indexUL{
+    border: 1px darkgrey solid;
+}
+
+#indexUL li{
+    padding: 3px;
 }

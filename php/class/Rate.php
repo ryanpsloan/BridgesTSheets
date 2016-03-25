@@ -122,7 +122,7 @@ class Rate{
             throw(new mysqli_sql_exception("Input is not a valid mysqli object"));
         }
 
-        $query = "SELECT rateId, rate, ed, code FROM rate";
+        $query = "SELECT rateId, rate, ed, code FROM rate ORDER BY rate ASC";
         $statement = $mysqli->prepare($query);
         if($statement === false){
             throw(new mysqli_sql_exception("Unable to prepare statement"));
