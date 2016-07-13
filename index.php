@@ -57,6 +57,12 @@ session_start();
 <div class="container-fluid">
     <div class="row center border">
         <h3>Bridges TSheets Formatter</h3>
+        <div id="notice">
+            <p>The Formatter has been reconfigured to take the new file format from Bridges </p>
+            <p>Files before 7/10/16 will no longer work</p>
+            <p>Headers should be: </p>
+            <p>fname,lname,<strong>Full Name</strong>,group,local_date,hours,jobcode_1,jobcode_2,service item,Rate</p>
+        </div>
         <a href="format.php">Format File</a>
         <ul id="indexUL">
             <li>

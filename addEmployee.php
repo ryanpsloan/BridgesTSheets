@@ -29,11 +29,11 @@ session_start();
                 $("input[id='employeeId']").val(data);
                 var value = select.val();
                 var text = $("#employeeList option:selected").text();
-                var arr = text.split(" ");
+                var arr = text.split(", ");
                 //console.log(arr);
                 empId.val(value);
-                firstName.val(arr[0]);
-                lastName.val(arr[1]);
+                firstName.val(arr[1]);
+                lastName.val(arr[0]);
 
             });
 
@@ -43,6 +43,10 @@ session_start();
                 $("input[id='employeeIdA']").val(value);
 
             });
+
+
+
+
 
         });
     </script>
@@ -79,13 +83,35 @@ session_start();
     </nav>
 </header>
 <main>
-    <div><?php if(isset($_SESSION['output'])){ echo $_SESSION['output']; $_SESSION['output'] = "";} ?></div>
-    <ul class="nav nav-tabs">
+    <div><?php if(isset($_SESSION['output'])){ echo $_SESSION['output']; $_SESSION['output'] = null; echo "<hr/>";} ?></div>
+    <ul class="nav nav-tabs center" id="myTabs">
         <li class="active"><a data-toggle="tab" href="#home">Add Employee</a></li>
         <li><a data-toggle="tab" href="#menu1">Update Employee</a></li>
         <li><a data-toggle="tab" href="#menu2">Delete Employee</a></li>
         <li><a data-toggle="tab" href="#menu3">View Employees</a></li>
     </ul>
+    <script>
+        $(document).ready(function(){
+            var tabList = $("ul.nav.nav-tabs.center > li > a");
+
+            tabList.click(function(){
+
+                    var id = $(this).attr("href");
+                    localStorage.setItem('hash', id);
+                    //console.log(localStorage);
+
+
+            });
+
+            var hash = localStorage.getItem('hash');
+            //console.log(has);
+            $('#myTabs a[href="' + hash + '"]').tab('show');
+
+
+
+        });
+
+    </script>
 
     <div class="tab-content">
         <div id="home" class="tab-pane fade in active center">
@@ -110,11 +136,12 @@ session_start();
             <?php
                 $mysqli = MysqliConfiguration::getMysqli();
                 $employees = Employee::getAllEmployees($mysqli);
+            var_dump($employees);
                 if($employees !== null) {
                     foreach ($employees as $object) {
                         $employeeId = $object->getEmployeeId();
                         $empId = $object->getEmpId();
-                        $name = ucwords($object->getFirstName() . " " . $object->getLastName());
+                        $name = ucwords($object->getLastName() . ", " . $object->getFirstName());
                         echo <<<HTML
 
                         <option data-employee="$employeeId" value="$empId">$name</option>
@@ -128,9 +155,9 @@ HTML;
                 <input type="hidden" id="employeeId" name="employeeId" value="">
                 <table>
                     <tr>
-                        <td><label for="empId1">Evolution Id</label><input type="text" id="empId1" name="empId1"></td>
-                        <td><label for="firstName1">First Name</label><input type="text" id="firstName1" name="firstName1"></td>
-                        <td><label for="lastName1">Last Name</label><input type="text" id="lastName1" name="lastName1"></td>
+                        <td><label for="empId1">Evolution Id</label><input type="text" id="empId1" name="empId1" required></td>
+                        <td><label for="firstName1">First Name</label><input type="text" id="firstName1" name="firstName1" required></td>
+                        <td><label for="lastName1">Last Name</label><input type="text" id="lastName1" name="lastName1" required></td>
                     </tr>
                     <tr><td></td><td><input type="submit" value="Update Employee" id="submit1" name="submit1"></td><td></td></tr>
                 </table>
@@ -151,7 +178,7 @@ HTML;
 
                             $employeeId = $object->getEmployeeId();
                             $empId = $object->getEmpId();
-                            $name = ucwords($object->getFirstName() . " " . $object->getLastName());
+                            $name = ucwords($object->getLastName() . ", " . $object->getFirstName());
                             echo <<<HTML
 
                         <option data-employee="$employeeId" value="$empId">$name</option>
@@ -177,9 +204,9 @@ HTML;
 
             <?php
                $mysqli = MysqliConfiguration::getMysqli();
-               $employees = Employee::getAllEmployees($mysqli);
+               $employees = Employee::getAllEmployees($mysqli,1);
                if($employees !== null) {
-                   echo "<tr><td>Database Id</td><td>Evolution Id</td><td>First Name</td><td>Last Name</td></tr>";
+                   echo "<tr><td>Database Id</td><td>Evolution Id</td><td>Last Name</td><td>First Name</td></tr>";
                    foreach ($employees as $object) {
                        $employeeId = $object->getEmployeeId();
                        $empId = $object->getEmpId();
@@ -187,7 +214,7 @@ HTML;
                        $lastName = ucwords($object->getLastName());
                        echo <<<HTML
 
-                    <tr><td>$employeeId</td><td>$empId</td><td>$firstName</td><td>$lastName</td></tr>
+                    <tr><td>$employeeId</td><td>$empId</td><td>$lastName</td><td>$firstName</td></tr>
 HTML;
 
                    }
@@ -198,6 +225,7 @@ HTML;
         </table>
         </div>
     </div>
+
 </main>
 </body>
 </html>

@@ -61,3 +61,7 @@ hr{
 #indexUL li{
     padding: 3px;
 }
+
+#notice{
+    background-color: azure;
+}

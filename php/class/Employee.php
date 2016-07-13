@@ -272,12 +272,15 @@ class Employee{
         }
     }
 
-    public static function getAllEmployees(&$mysqli){
+    public static function getAllEmployees(&$mysqli, $sort = 0){
         if(gettype($mysqli) !== "object" || get_class($mysqli) !== "mysqli"){
             throw(new mysqli_sql_exception("Input is not a valid mysqli object"));
         }
-
-        $query = "SELECT employeeId, empId, firstName, lastName FROM employee ORDER BY empId ASC";
+        if($sort === 0) {
+            $query = "SELECT employeeId, empId, firstName, lastName FROM employee ORDER BY lastName ASC";
+        }else{
+            $query = "SELECT employeeId, empId, firstName, lastName FROM employee ORDER BY empId ASC";
+        }
         $statement = $mysqli->prepare($query);
         if($statement === false){
             throw(new mysqli_sql_exception("Unable to prepare statement"));

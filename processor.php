@@ -5,19 +5,6 @@
   they balance and output the total and whether or not the balance to a web page
   ryan@paydayinc.com
  *********************************************************************************************************************/
-/**
-Data Example:
-
-Index: 0            1        2          3        4   5-num   6   7    8-DB   9-CR      10-name
-PR061015 WK# 24, 99982473, ER WCA,   6/11/2015, 6508, 200,  20,  60,  2.3,       0, AGNES L OLSEN
-PR061015 WK# 24, 99982473, NM-SUI,   6/11/2015, 6510, 200,  20,  60, 5.47,       0, AGNES L OLSEN
-PR061015 WK# 24, 99982499, NETPAY,   6/11/2015, 1030, 100,   0,   0,    0,  483.07, AMANDA  JARAMILLO
-PR061015 WK# 24, 99982499, OASDI,    6/11/2015, 2210, 100,   0,   0,    0,   44.27, AMANDA  JARAMILLO
-PR061015 WK# 24, 99982499, ER OASDI, 6/11/2015, 2210, 100,   0,   0,    0,   44.27, AMANDA  JARAMILLO
-PR061015 WK# 24, 99982499, MEDICARE, 6/11/2015, 2220, 100,   0,   0,    0,   10.35, AMANDA  JARAMILLO
-
- *
- **/
 
 session_start();
 include_once("/var/www/html/Bridges/php/class/Employee.php");
@@ -147,7 +134,7 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         foreach($fileData as $key => $value ){
 
             $nameArr[] = $value[1];
-            $jobArr[] = $value[5];
+            $jobArr[] = $value[6];
         }
         array_multisort($nameArr, SORT_ASC, $jobArr, SORT_ASC, $fileData);
 
@@ -159,16 +146,20 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         $data = array();
         foreach($fileData as $line){
             //$newDate = new DateTime($line[3]);
-            $data[$line[0]." ".$line[1]][$line[5] . " " . $line[6]][] = $line; //[$newDate->format("m-d-Y")][] = $line;
+            $data[trim($line[0])." ".trim($line[1])][$line[7] . " " . $line[8]][$line[10]][] = $line; //[$newDate->format("m-d-Y")][] = $line;
         }
 
         //var_dump($data);
         $sum = array();
         foreach($data as $name => $ee) {
             foreach ($ee as $job => $arr) {
-                foreach($arr as $row) {
-                   //$newDate = new DateTime($row[3]);
-                   $sum[$name][$job][] = $row[4];//[$newDate->format("m-d-Y")][] = $row[4];
+                foreach($arr as $rate => $a) {
+                    foreach($a as $row){
+                        //var_dump($row);
+                        //$newDate = new DateTime($row[3]);
+                        $sum[$name][$job][$rate][] = $row[4];//[$newDate->format("m-d-Y")][] = $row[4]
+                    }
+
 
                 }
             }
@@ -180,7 +171,10 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         foreach($sum as $name => $ee){
 
             foreach($ee as $job => $arr){
-                $summed[$name][$job] = array_sum($arr);
+                foreach($arr as $rate => $line){
+                    $summed[$name][$job][$rate] = array_sum($line);
+                }
+
             }
         }
         //var_dump($summed);
@@ -197,29 +191,37 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
             if($employee === null){
                 throw(new Exception($nameArr[0] ." ". $nameArr[1]. " is not in the employee database please add them.<br><a href='addEmployee.php'>Add ". $nameArr[0]."</a>"));
             }
-            foreach ($ee as $job => $line) {
-                    //var_dump($line[0][8]);
-                    $date = $line[0][3];
-                    $jobDescription = $line[0][5] . " " . $line[0][6];
-                    $jobObj = Job::getJobByJobDescription($mysqli, $jobDescription);
-                    //var_dump($nameArr, $jobDescription, $jobObj);
-                    $objCode = $jobObj->getJobCode();
-                    //var_dump($nameArr, $jobDescription, $jobObj, $objCode);
-                    $rate = Rate::getRateByRate($mysqli, $line[0][8]);
-                    $objRate = $line[0][8];
-                    if(substr($objRate,0,2) === "PT"){
-                        $objRate = substr($objRate,10,1);
-                    }else if(substr($objRate,0,2) === "OT"){
-                        $objRate = substr($objRate,9,1);
-                    }else if(substr($objRate,0,2) === "Ra"){
-                        $objRate = substr($objRate,5,1);
-                    }else if(substr($objRate,0,2) === "SA"){
-                        $objRate = "";
-                    }
-                    //var_dump($rate);
-                    //                        0                           1              2      3       4         5               6           7        8                9  10             15             20          25
-                    $output[] = array($employee->getEmpId(), "$nameArr[0], $nameArr[1]", "","$objCode", "", $rate->getED(), $rate->getCode(), "", $summed[$name][$job], "","","","","","","","","","","","","","","","",$objRate);
+            foreach ($ee as $job => $arr) {
+                    //var_dump($line);
+                    foreach($arr as $rate => $line){
+                        $date = $line[0][5];
+                        $jobDescription = $line[0][7] . " " . $line[0][8];
+                        $jobObj = Job::getJobByJobDescription($mysqli, $jobDescription);
+                        if($jobObj === null){
+                            throw(new Exception("The job $jobDescription is not in the database, please notify ryan to add it."));
+                        }
+                        //var_dump($nameArr, $jobDescription, $jobObj);
+                        $objCode = $jobObj->getJobCode();
+                        //var_dump($nameArr, $jobDescription, $jobObj, $objCode);
+                        $queryRate = Rate::getRateByRate($mysqli, $line[0][10]);
+                        if($queryRate === null){
+                            throw(new Exception("The rate ".$line[0][10]." is not in the database, please notify ryan to add it."));
+                        }
+                        $objRate = $line[0][10];
+                        if(substr($objRate,0,2) === "PT"){
+                            $objRate = substr($objRate,11,1);
+                        }else if(substr($objRate,0,2) === "OT"){
+                            $objRate = substr($objRate,10,1);
+                        }else if(substr($objRate,0,2) === "Ra"){
+                            $objRate = substr($objRate,5,1);
+                        }else if(substr($objRate,0,2) === "SA" || substr($objRate,0,2) === "Sa"){
+                            $objRate = "";
+                        }
+                        //var_dump($objRate);
+                        //                        0                           1              2      3       4         5               6                    7        8                       9  10             15             20          25
+                        $output[] = array($employee->getEmpId(), "$nameArr[0] $nameArr[1]", "","$objCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$objRate);
 
+                    }
             }
         }
 
