@@ -176,23 +176,23 @@ HTML;
         </div>
         <div id="menu2" class="tab-pane fade center">
             <h3>Delete Employee</h3>
-            <form action="processEmployee.php" method="POST">
-                <table><tr><td>Select Employee to Delete:</td><td>
-                            <select id="employeeListB" name="employeeListB" required>
+            <form action="processJob.php" method="POST">
+                <table><tr><td>Select Job to Delete:</td><td>
+                            <select id=jobListB" name="jobListB" required>
                                 <option value="None">None Selected</option>
                                 <?php
                                 $mysqli = MysqliConfiguration::getMysqli();
-                                $employees = Employee::getAllEmployees($mysqli);
+                                $jobs = Job::getAllJobs($mysqli);
 
-                                if($employees !== null) {
-                                    foreach ($employees as $object) {
+                                if($jobs !== null) {
+                                    foreach ($jobs as $object) {
 
-                                        $employeeId = $object->getEmployeeId();
-                                        $empId = $object->getEmpId();
-                                        $name = ucwords($object->getLastName() . ", " . $object->getFirstName());
+                                        $jobId = $object->getJobId();
+                                        $jobCode = $object->getJobCode();
+                                        $jobDesc = $object->getJobDescription();
                                         echo <<<HTML
 
-                        <option data-employee="$employeeId" value="$empId">$name</option>
+                        <option data-employee="$jobId" value="jobId">$jobCode</option>
 HTML;
 
 
@@ -206,7 +206,7 @@ HTML;
                     </tr>
 
                 </table>
-                <input type="hidden" id="employeeIdA" name="employeeIdA" value="">
+                <input type="hidden" id="jobIdA" name="jobIdA" value="">
             </form>
         </div>
         <div id="menu3" class="tab-pane fade in center">

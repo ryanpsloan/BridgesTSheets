@@ -4,7 +4,7 @@ include_once ("/var/www/html/Bridges/php/class/dbConnect.php");
 include_once ("/var/www/html/Bridges/php/class/Job.php");
 
 $mysqli = MysqliConfiguration::getMysqli();
-var_dump($POST_['submit1']);
+
 if(isset($_POST['submit'])) {
     $jobCode = $_POST['jobCode'];
     $jobDesc = $_POST['jobDesc'];
@@ -17,7 +17,7 @@ if(isset($_POST['submit'])) {
         $_SESSION['output'] = $jobCode . " was not inserted: " . $e->getMessage();
     }
 
-    //header("Location: addJob.php");
+    header("Location: addJob.php");
 }
 else if(isset($_POST['submit1'])){
     $jobCode = $_POST['jobCode1'];
@@ -38,16 +38,16 @@ else if(isset($_POST['submit1'])){
     header("Location: addJob.php");
 
 }else if(isset($_POST['submit2'])){
-    $employeeId = intval($_POST['employeeIdA']);
+    $jobId = intval($_POST['jobIdA']);
 
-    $employee = Employee::getEmployeeByEmployeeId($mysqli,$employeeId);
+    $job = Job::getJobByJobId($mysqli,$jobId);
 
     try {
-        $employee->delete($mysqli);
-        $_SESSION['output'] = ucwords($employee->getFirstName()). " " . ucwords($employee->getLastName()) ." has been deleted";
+        $job->delete($mysqli);
+        $_SESSION['output'] = $job->getJobCode() ." has been deleted";
     }catch(Exception $e){
-        $_SESSION['output'] = ucwords($employee->getFirstName()). " " . ucwords($employee->getLastName()) ." has been deleted" . $e->getMessage();
+        $_SESSION['output'] = $job->getJobCode() ." has not been deleted: " . $e->getMessage();
     }
 
-    header("Location: addEmployee.php");
+    header("Location: addJob.php");
 }

@@ -140,6 +140,55 @@ class Job{
         }
     }
 
+    public static function getJobByJobId(&$mysqli,$jobId){
+        if(gettype($mysqli) !== "object" || get_class($mysqli) !== "mysqli"){
+            throw(new mysqli_sql_exception("Input is not a valid mysqli object"));
+        }
+
+        $jobId = intval($jobId);
+        if(filter_var($jobId, FILTER_VALIDATE_INT) === false){
+            throw(new UnexpectedValueException("jobId $jobId is not an integer"));
+        }
+
+        if($jobId <= 0){
+            throw(new RangeException("jobId $jobId is not positive"));
+        }
+
+        $query = "SELECT jobId, jobCode, jobDescription FROM job WHERE jobId = ?";
+        $statement = $mysqli->prepare($query);
+        if($statement === false){
+            throw(new mysqli_sql_exception("Unable to prepare statement"));
+        }
+
+        $wasClean = $statement->bind_param("i", $jobId);
+        if($wasClean === false){
+            throw(new mysqli_sql_exception("Unable to bind parameters"));
+        }
+
+        if($statement->execute() === false){
+            throw(new mysqli_sql_exception("Unable to execute mysqli statement"));
+        }
+
+        $result = $statement->get_result();
+
+        if($result === false){
+            throw(new mysqli_sql_exception("Unable to get result set"));
+        }
+
+        $row = $result->fetch_assoc();
+
+        if($row !== null){
+            try{
+                $job = new Employee($row['jobId'], $row['jobCode'], $row['jobDescription']);
+            }catch(Exception $exception){
+                throw(new mysqli_sql_exception("Unable to convert row to Job Object", 0, $exception));
+            }
+            return $job;
+        }else{
+            return null;
+        }
+    }
+
     public static function getJobByJobDescription(&$mysqli, $jobDescription){
         $jobDescription = trim($jobDescription);
         $jobDescription = filter_var($jobDescription, FILTER_SANITIZE_STRING);
