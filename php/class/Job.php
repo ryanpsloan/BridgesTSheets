@@ -179,7 +179,7 @@ class Job{
 
         if($row !== null){
             try{
-                $job = new Employee($row['jobId'], $row['jobCode'], $row['jobDescription']);
+                $job = new Job($row['jobId'], $row['jobCode'], $row['jobDescription']);
             }catch(Exception $exception){
                 throw(new mysqli_sql_exception("Unable to convert row to Job Object", 0, $exception));
             }
@@ -230,7 +230,7 @@ class Job{
             throw(new mysqli_sql_exception("Input is not a valid mysqli object"));
         }
 
-        $query = "SELECT jobId, jobCode, jobDescription FROM job ORDER BY jobDescription ASC";
+        $query = "SELECT jobId, jobCode, jobDescription FROM job ORDER BY jobCode ASC";
         $statement = $mysqli->prepare($query);
         if($statement === false){
             throw(new mysqli_sql_exception("Unable to prepare statement"));

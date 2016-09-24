@@ -20,11 +20,11 @@ if(isset($_POST['submit'])) {
     header("Location: addJob.php");
 }
 else if(isset($_POST['submit1'])){
+    $jobId = $_POST['jobId'];
     $jobCode = $_POST['jobCode1'];
     $jobDesc = $_POST['jobDesc1'];
 
-
-    $newJob = Job::getJobByJobDescription($mysqli,$jobDesc);
+    $newJob = Job::getJobByJobId($mysqli,$jobId);
     $newJob->setJobCode($jobCode);
     $newJob->setJobDescription($jobDesc);
 
@@ -38,7 +38,8 @@ else if(isset($_POST['submit1'])){
     header("Location: addJob.php");
 
 }else if(isset($_POST['submit2'])){
-    $jobId = intval($_POST['jobIdA']);
+    var_dump($_POST['jobIdB']);
+    $jobId = intval($_POST['jobIdB']);
 
     $job = Job::getJobByJobId($mysqli,$jobId);
 

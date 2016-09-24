@@ -69,6 +69,12 @@ session_start();
                 <a href="addEmployee.php">Add/Edit/Update Employee Information</a>
             </li>
             <li>
+                <a href="addJob.php">Add/Edit/Update Job Information</a>
+            </li>
+            <li>
+                <a href="addRate.php">Add/Edit/Update Rate Information</a>
+            </li>
+            <li>
                 <a href="viewRates.php">View Rate Information</a>
             </li>
             <li>

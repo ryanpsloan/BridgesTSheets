@@ -6,7 +6,7 @@ session_start();
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Employees</title>
+    <title>Edit Jobs</title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 
@@ -20,15 +20,17 @@ session_start();
         $(document).ready(function() {
             var select = $("select[id='jobList']");
             var selectB = $("select[id='jobListB']");
+
             var jobId = $("input[id='jobId1']");
             var jobCode = $("input[id='jobCode1']");
             var jobDesc = $("input[id='jobDesc1']");
 
 
-            select.change(function(){
+            select.on('change',function(){
                 var data = $(this).find(':selected').data('job');
                 var desc = $(this).find(':selected').data('desc');
                 console.log(data);
+                console.log(desc);
                 $("input[id='jobId']").val(data);
                 var value = select.val();
                 var text = $("#jobList option:selected").text();
@@ -40,10 +42,10 @@ session_start();
 
             });
 
-            selectB.change(function(){
-                var value = $(this).find(':selected').data('job');
-                //console.log(value);
-                $("input[id='jobIdA']").val(value);
+            selectB.on('change', function(){
+                var value = $(this).find(':selected').val();
+                console.log("B",value);
+                $("input[id='jobIdB']").val(value);
 
             });
 
@@ -178,7 +180,7 @@ HTML;
             <h3>Delete Employee</h3>
             <form action="processJob.php" method="POST">
                 <table><tr><td>Select Job to Delete:</td><td>
-                            <select id=jobListB" name="jobListB" required>
+                            <select id="jobListB" name="jobListB" required>
                                 <option value="None">None Selected</option>
                                 <?php
                                 $mysqli = MysqliConfiguration::getMysqli();
@@ -192,7 +194,7 @@ HTML;
                                         $jobDesc = $object->getJobDescription();
                                         echo <<<HTML
 
-                        <option data-employee="$jobId" value="jobId">$jobCode</option>
+                        <option value="$jobId">$jobCode</option>
 HTML;
 
 
@@ -206,31 +208,30 @@ HTML;
                     </tr>
 
                 </table>
-                <input type="hidden" id="jobIdA" name="jobIdA" value="">
+                <input type="hidden" id="jobIdB" name="jobIdB" value="">
             </form>
         </div>
         <div id="menu3" class="tab-pane fade in center">
-            <h3>View Employees</h3>
-            <table id="viewEmployeesTable">
+            <h3>View Jobs</h3>
+            <table id="viewJobsTable">
 
                 <?php
                 $mysqli = MysqliConfiguration::getMysqli();
-                $employees = Employee::getAllEmployees($mysqli,1);
-                if($employees !== null) {
-                    echo "<tr><td>Database Id</td><td>Evolution Id</td><td>Last Name</td><td>First Name</td></tr>";
-                    foreach ($employees as $object) {
-                        $employeeId = $object->getEmployeeId();
-                        $empId = $object->getEmpId();
-                        $firstName = ucwords($object->getFirstName());
-                        $lastName = ucwords($object->getLastName());
+                $jobs = Job::getAllJobs($mysqli);
+                if($jobs !== null) {
+                    echo "<tr><td>Database Id</td><td>Job Code</td><td>Job Description</td></tr>";
+                    foreach ($jobs as $object) {
+                        $jobId = $object->getJobId();
+                        $jobCode = $object->getJobCode();
+                        $jobDesc = $object->getJobDescription();
                         echo <<<HTML
 
-                    <tr><td>$employeeId</td><td>$empId</td><td>$lastName</td><td>$firstName</td></tr>
+                    <tr><td>$jobId</td><td>$jobCode</td><td>$jobDesc</td></tr>
 HTML;
 
                     }
                 }else{
-                    echo "<tr><td>No employees to list</td></tr>";
+                    echo "<tr><td>No jobs to list</td></tr>";
                 }
                 ?>
             </table>

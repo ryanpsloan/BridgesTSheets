@@ -2,6 +2,13 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="Payday Web Server - Bridges">
     <serverData>
+      <paths name="Payday Web Server - ACB">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="Payday Web Server - Bridges">
         <serverdata>
           <mappings>
