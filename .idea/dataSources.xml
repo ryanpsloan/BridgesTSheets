@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="1825271080">
-    <data-source source="LOCAL" name="MySQL - Bridges@localhost" uuid="45747d27-5d27-43a0-be48-17eea486fa79">
-      <driver-ref>mysql</driver-ref>
+  <component name="DataSourceManagerImpl" format="xml" hash="">
+    <data-source source="LOCAL" name="" uuid="">
+      <driver-ref></driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/Bridges</jdbc-url>
+      <jdbc-url></jdbc-url>
       <driver-properties>
         <property name="zeroDateTimeBehavior" value="convertToNull" />
         <property name="tinyInt1isBit" value="false" />
