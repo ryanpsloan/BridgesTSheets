@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="Payday Web Server - Bridges">
+  <component name="PublishConfigData" autoUpload="Always" serverName="">
     <serverData>
-      <paths name="Payday Web Server - ACB">
+      <paths name="">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="Payday Web Server - Bridges">
+      <paths name="">
         <serverdata>
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="Payday Web Server - Seasonal Magic">
+      <paths name="">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
