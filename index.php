@@ -3,7 +3,7 @@
 session_start();
 
 ?>
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Bridges TSheets Formatter</title>
@@ -57,19 +57,14 @@ session_start();
 <div class="container-fluid">
     <div class="row center border">
         <h3>Bridges TSheets Formatter</h3>
-        <div id="notice">
-            <p>The Formatter has been reconfigured to take the new file format from Bridges </p>
-            <p>Files before 7/10/16 will no longer work</p>
-            <p>Headers should be: </p>
-            <p>fname,lname,<strong>Full Name</strong>,group,local_date,hours,jobcode_1,jobcode_2,service item,Rate</p>
-        </div>
+
         <a href="format.php">Format File</a>
         <ul id="indexUL">
             <li>
-                <a href="addEmployee.php">Add/Edit/Update Employee Information</a>
+                <!--<a href="addEmployee.php">Add/Edit/Update Employee Information</a>-->
             </li>
             <li>
-                <a href="addJob.php">Add/Edit/Update Job Information</a>
+                <!--<a href="addJob.php">Add/Edit/Update Job Information</a>-->
             </li>
             <li>
                 <a href="addRate.php">Add/Edit/Update Rate Information</a>
@@ -78,7 +73,7 @@ session_start();
                 <a href="viewRates.php">View Rate Information</a>
             </li>
             <li>
-                <a href="viewJobs.php">View Job Information</a>
+                <!--<a href="viewJobs.php">View Job Information</a>-->
             </li>
             <li>
 

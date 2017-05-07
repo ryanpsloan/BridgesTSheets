@@ -172,12 +172,12 @@ HTML;
                         <td><label for="jobCode1">Job Code</label><input type="text" id="jobCode1" name="jobCode1" required></td>
                         <td><label for="jobDesc1">Last Name</label><input type="text" id="jobDesc1" name="jobDesc1" required></td>
                     </tr>
-                    <tr><td></td><td><input type="submit" value="Update Employee" id="submit1" name="submit1"></td><td></td></tr>
+                    <tr><td></td><td><input type="submit" value="Update Job" id="submit1" name="submit1"></td><td></td></tr>
                 </table>
             </form>
         </div>
         <div id="menu2" class="tab-pane fade center">
-            <h3>Delete Employee</h3>
+            <h3>Delete JOb</h3>
             <form action="processJob.php" method="POST">
                 <table><tr><td>Select Job to Delete:</td><td>
                             <select id="jobListB" name="jobListB" required>
@@ -204,7 +204,7 @@ HTML;
                                 ?></select></td>
 
 
-                        <td><input type="submit" value="Delete Employee" id="submit2" name="submit2"></td>
+                        <td><input type="submit" value="Delete Job" id="submit2" name="submit2"></td>
                     </tr>
 
                 </table>

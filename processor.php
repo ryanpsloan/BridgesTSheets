@@ -103,10 +103,7 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
             throw new RuntimeException("Unable to Open Stream.");
         } else {
             fwrite($log, "Stream Opened Successfully." . PHP_EOL);
-            //echo "<p>Stream Opened Successfully.</p>";
         }
-
-        //echo "<hr>";
 
         $fileData = array();
         //read first line headers
@@ -138,34 +135,39 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         }
         array_multisort($nameArr, SORT_ASC, $jobArr, SORT_ASC, $fileData);
 
-
-        $_SESSION['fileData'] = $fileData;
-
         //var_dump($fileData);
 
         $data = array();
         foreach($fileData as $line){
-            //$newDate = new DateTime($line[3]);
-            $data[trim($line[0])." ".trim($line[1])][$line[7] . " " . $line[8]][$line[10]][] = $line; //[$newDate->format("m-d-Y")][] = $line;
-        }
+            $lastName = preg_replace("/\"/", "", trim($line[1]));
+            if(strpos($line[2], "-") !== false) {
+                $temp = explode("-", preg_replace("/\"/", "", trim($line[2])));
+                $firstName = trim($temp[0]);
+                $temp = trim($temp[1]);
+                $jobType = " - " . $temp;
+            }else{
+                $firstName = preg_replace("/\"/", "", trim($line[2]));
+                $jobType = '';
+            }
 
-        //var_dump($data);
+            $rate = trim($line[4]);
+            $job = trim($line[6]);
+
+            $data[($firstName . " " . $lastName . $jobType)][$job][$rate][] = array($line[0], $lastName, $firstName, $line[3], $rate, $line[5], $line[6], $line[7]);         }
+
+        //var_dump("DATA", $data);
         $sum = array();
         foreach($data as $name => $ee) {
             foreach ($ee as $job => $arr) {
                 foreach($arr as $rate => $a) {
                     foreach($a as $row){
-                        //var_dump($row);
-                        //$newDate = new DateTime($row[3]);
-                        $sum[$name][$job][$rate][] = $row[4];//[$newDate->format("m-d-Y")][] = $row[4]
+                        $sum[$name][$job][$rate][] = $row[5];
                     }
-
-
                 }
             }
         }
 
-        //var_dump($sum);
+        //var_dump("SUM", $sum);
 
         $summed = array();
         foreach($sum as $name => $ee){
@@ -177,25 +179,65 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
 
             }
         }
-        //var_dump($summed);
 
+        //var_dump("SUMMED", $summed);
         $mysqli = MysqliConfiguration::getMysqli();
+        $output = array();
+        foreach($data as $name => $ee){
+            foreach($ee as $job => $arr){
+                foreach($arr as $rate => $line){
+                    $queryRate = Rate::getRateByRate($mysqli, $rate);
+                    $nameArr = explode(' ', $name);
+                    $firstName = $nameArr[0];
+                    $lastName = $nameArr[1];
+                    $jobCode = $line[0][6];
+                    //          0                           1              2      3       4         5               6                    7        8                       9  10             15             20          25
+                    $output[] = array($line[0][0], "$firstName $lastName", "","$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$rate);
+
+                }
+            }
+        }
+        /*$mysqli = MysqliConfiguration::getMysqli();
         $output = array();
         foreach($data as $name => $ee) {
             $nameArr = explode(' ', $name);
-            if($nameArr[0] === ""){
-                continue;
+
+            if(isset($nameArr[3])){
+                $firstName = $nameArr[0];
+                $lastName = $nameArr[1];
+                $jobType = $nameArr[3];
+            }else{
+                $firstName = $nameArr[0];
+                $lastName = $nameArr[1];
+                $jobType = '';
             }
-            $employee = Employee::getEmployeeByName($mysqli, $nameArr[0], $nameArr[1]);
-            //var_dump($employee);
+
+            $employees = Employee::getEmployeeByName($mysqli, $firstName, $lastName);
+            var_dump($employees);
+            if(count($employees) > 1){
+                foreach ($employees as $emp){
+
+                    if($jobType === "Contractor" && strpos($emp->getEmpId(), "C") !== false){
+                        $employee = $emp;
+                    }else if($jobType === "Employee" && strpos($emp->getEmpId(), "C") === false){
+                        $employee = $emp;
+                    }else{
+                        $employee = $emp;
+                    }
+
+                }
+            }else{
+                $employee = $employees[0];
+            }
+            var_dump($name,$employee);
             if($employee === null){
-                throw(new Exception($nameArr[0] ." ". $nameArr[1]. " is not in the employee database please add them.<br><a href='addEmployee.php'>Add ". $nameArr[0]."</a>"));
+                throw(new Exception($firstName ." ". $lastName . " is not in the employee database please add them.<br><a href='addEmployee.php'>Add ". $nameArr[0]."</a>"));
             }
             foreach ($ee as $job => $arr) {
-                    //var_dump($line);
+
                     foreach($arr as $rate => $line){
-                        $date = $line[0][5];
-                        $jobDescription = $line[0][7] . " " . $line[0][8];
+                        $date = $line[0][3];
+                        $jobDescription = $line[0][7];
                         $jobObj = Job::getJobByJobDescription($mysqli, $jobDescription);
                         if($jobObj === null){
                             throw(new Exception("The job $jobDescription is not in the database, please notify ryan to add it."));
@@ -223,7 +265,7 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
 
                     }
             }
-        }
+        }*/
 
         //var_dump($output);
 

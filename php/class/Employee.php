@@ -258,17 +258,21 @@ class Employee{
             throw(new mysqli_sql_exception("Unable to get result set"));
         }
 
-        $row = $result->fetch_assoc();
+        $employeeArray = array();
+        while(($row = $result->fetch_assoc()) !== null){
 
-        if($row !== null){
             try{
-                $employee = new Employee($row['employeeId'], $row['empId'], $row['firstName'], $row['lastName']);
+                $employeeArray[] = new Employee($row['employeeId'], $row['empId'], $row['firstName'], $row['lastName']);
             }catch(Exception $exception){
                 throw(new mysqli_sql_exception("Unable to convert row to Employee Object", 0, $exception));
             }
-            return $employee;
-        }else{
+
+
+        }
+        if($result->num_rows === 0){
             return null;
+        }else{
+            return $employeeArray;
         }
     }
 
@@ -313,7 +317,7 @@ class Employee{
 
         }
         if($result->num_rows === 0){
-            return null;
+            return array(null);
         }else{
             return $employeeArray;
         }
