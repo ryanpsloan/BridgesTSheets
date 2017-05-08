@@ -60,8 +60,7 @@ session_start();
 
         <a href="format.php">Format File</a>
         <ul id="indexUL">
-            <li>
-                <!--<a href="addEmployee.php">Add/Edit/Update Employee Information</a>-->
+            <li><a href="addEmployee.php">Add/Edit/Update Employee Information</a>
             </li>
             <li>
                 <!--<a href="addJob.php">Add/Edit/Update Job Information</a>-->

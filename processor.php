@@ -186,13 +186,23 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
         foreach($data as $name => $ee){
             foreach($ee as $job => $arr){
                 foreach($arr as $rate => $line){
+
                     $queryRate = Rate::getRateByRate($mysqli, $rate);
                     $nameArr = explode(' ', $name);
                     $firstName = $nameArr[0];
                     $lastName = $nameArr[1];
                     $jobCode = $line[0][6];
+                    $eeId = $line[0][0];
+                    if($eeId === ''){
+                        $employee = Employee::getEmployeeByName($mysqli, $firstName, $lastName);
+                        if($employee ===  null){
+                            throw(new RuntimeException("The employee Id line is blank for $firstName $lastName and cannot be added via the Database, please add employee or update the file with the Employee Id"));
+                        }
+                        $eeId = $employee->getEmployeeId();
+                    }
+
                     //          0                           1              2      3       4         5               6                    7        8                       9  10             15             20          25
-                    $output[] = array($line[0][0], "$firstName $lastName", "","$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$rate);
+                    $output[] = array($eeId, "$firstName $lastName", "","$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$rate);
 
                 }
             }
