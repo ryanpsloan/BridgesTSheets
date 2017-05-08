@@ -69,7 +69,7 @@ session_start();
                 <a href="addRate.php">Add/Edit/Update Rate Information</a>
             </li>
             <li>
-                <a href="viewRates.php">View Rate Information</a>
+                <!--<a href="viewRates.php">View Rate Information</a>-->
             </li>
             <li>
                 <!--<a href="viewJobs.php">View Job Information</a>-->
