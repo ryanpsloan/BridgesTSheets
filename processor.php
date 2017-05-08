@@ -193,12 +193,14 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
                     $lastName = $nameArr[1];
                     $jobCode = $line[0][6];
                     $eeId = $line[0][0];
+
                     if($eeId === ''){
                         $employee = Employee::getEmployeeByName($mysqli, $firstName, $lastName);
+
                         if($employee ===  null){
-                            throw(new RuntimeException("The employee Id line is blank for $firstName $lastName and cannot be added via the Database, please add employee or update the file with the Employee Id"));
+                            throw(new RuntimeException("The employee Id field is blank for $firstName $lastName and cannot be added via the Database, please add employee to the Database or update the file with the Employee Id"));
                         }
-                        $eeId = $employee->getEmployeeId();
+                        $eeId = $employee->getEmpId();
                     }
 
                     //          0                           1              2      3       4         5               6                    7        8                       9  10             15             20          25
