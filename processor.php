@@ -188,6 +188,7 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
                 foreach($arr as $rate => $line){
 
                     $queryRate = Rate::getRateByRate($mysqli, $rate);
+                    $originalRate = $rate;
                     $nameArr = explode(' ', $name);
                     $firstName = $nameArr[0];
                     $lastName = $nameArr[1];
@@ -217,7 +218,7 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
                         $rate = "";
                     }
                     //          0                           1              2      3       4         5               6                    7        8                       9  10             15             20          25
-                    $output[] = array($eeId, /*"$firstName $lastName"*/"", "", $jobCode === 'None' ? '' : "$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$rate);
+                    $output[] = array($eeId, /*"$firstName $lastName"*/"", "", $jobCode === 'None' || $jobCode === ' None' ? '' : "$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$originalRate], "","","","","","","","","","","","","","","","",$rate);
 
                 }
             }
