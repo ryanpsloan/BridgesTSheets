@@ -203,8 +203,21 @@ if(isset($_FILES)) { //Check to see if a file is uploaded
                         $eeId = $employee->getEmpId();
                     }
 
+                    if(strpos($rate, "1") !== false){
+                        $rate = "1";
+                    }else if(strpos($rate, "2") !== false){
+                        $rate = "2";
+                    }else if(strpos($rate, "3") !== false){
+                        $rate = "3";
+                    }else if(strpos($rate, "4") !== false){
+                        $rate = "4";
+                    }else if(strpos($rate, "5") !== false){
+                        $rate = "5";
+                    }else {
+                        $rate = "";
+                    }
                     //          0                           1              2      3       4         5               6                    7        8                       9  10             15             20          25
-                    $output[] = array($eeId, "$firstName $lastName", "","$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$rate);
+                    $output[] = array($eeId, /*"$firstName $lastName"*/"", "", $jobCode === 'None' ? '' : "$jobCode", "", $queryRate->getED(), $queryRate->getCode(), "", $summed[$name][$job][$rate], "","","","","","","","","","","","","","","","",$rate);
 
                 }
             }
